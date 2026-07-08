@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #e9f7ef, #d1f2eb);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial;
+        }
+
+        .checkout-card {
+            width: 450px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #28a745;
+            text-align: center;
+        }
+
+        .total-box {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="checkout-card">
+
+    <div class="success-icon">✔️</div>
+
+    <h3 class="text-center mt-2">Order Checkout</h3>
+
+    <p class="text-center text-muted">Review your order before confirming</p>
+
+    <hr>
+
+    <!-- ORDER SUMMARY -->
+    <h5>🛒 Order Summary</h5>
+
+    <table class="table table-sm">
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price</th>
+        </tr>
+
+        {% for item in cart %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="total-box">
+        <h5>Total: ₹{{ total }}</h5>
+    </div>
+
+    <!-- CONFIRM BUTTON -->
+    <form method="POST" action="/checkout_confirm">
+        <button class="btn btn-success btn-full mt-3">
+            Confirm Purchase
+        </button>
+    </form>
+
+    <a href="/cart" class="btn btn-secondary btn-full mt-2">
+        Back to Cart
+    </a>
+
+</div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Success</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #e8f5e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .check {
+            font-size: 70px;
+            color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="check">✔️</div>
+
+    <h2>Payment Successful!</h2>
+
+    <p>Your order has been placed successfully.</p>
+
+    <a href="/shop" class="btn btn-primary mt-3">
+        Continue Shopping
+    </a>
+
+</div>
+
+</body>
+</html>

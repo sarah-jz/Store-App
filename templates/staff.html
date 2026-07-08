@@ -1,0 +1,25 @@
+<h1>Staff Dashboard</h1>
+
+<a href="/logout">Logout</a>
+
+<hr>
+
+<h2>Stock View Only</h2>
+
+<table border="1">
+    <tr>
+        <th>Pcode</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+
+    {% for item in stock %}
+    <tr>
+        <td>{{ item[0] }}</td>
+        <td>{{ item[1] }}</td>
+        <td>{{ item[2] }}</td>
+        <td>{{ item[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>

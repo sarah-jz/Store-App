@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shop</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .navbar {
+            background: #111;
+            color: white;
+            padding: 15px;
+        }
+
+        .product-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            padding: 15px;
+            background: white;
+            transition: 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .price {
+            font-weight: bold;
+            color: #198754;
+        }
+
+        .qty-input {
+            width: 80px;
+        }
+
+        img {
+            height: 150px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar d-flex justify-content-between">
+    <h4>🛍️ Grocery Shop</h4>
+
+    <div>
+        <a href="/cart" class="btn btn-warning btn-sm">Cart</a>
+        <a href="/checkout" class="btn btn-success btn-sm">Checkout</a>
+        <a href="/orders" class="btn btn-info btn-sm">Orders</a>
+        <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+</div>
+
+<div class="container mt-4">
+
+    <!-- SEARCH -->
+    <form method="GET" action="/shop" class="mb-4">
+
+        <div class="input-group">
+            <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Search products...">
+            <button class="btn btn-primary">Search</button>
+        </div>
+
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" name="in_stock" value="1">
+            <label class="form-check-label">Show In Stock Only</label>
+        </div>
+
+    </form>
+
+    <!-- PRODUCTS -->
+    <div class="row">
+
+        {% for item in products %}
+        <div class="col-md-4 mb-3">
+
+            <div class="product-card">
+
+                <!-- IMAGE -->
+                <img src="{{ url_for('static', filename='uploads/' + (item[4] or 'default.png')) }}">
+
+                <h5>
+    		    <a href="/product/{{ item[0] }}" style="text-decoration:none;">
+        	        {{ item[1] }}
+    	    	    </a>
+		</h5>
+
+                <p class="price">₹{{ item[3] }}</p>
+
+                <p>Stock: {{ item[2] }}</p>
+
+                <!-- STOCK BADGES -->
+                {% if item[2] > 0 %}
+                    <span class="badge bg-success">In Stock</span>
+                {% else %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+
+                {% if item[2] > 0 and item[2] <= 10 %}
+                    <span class="badge bg-warning">Low Stock</span>
+                {% endif %}
+
+                <!-- ADD TO CART -->
+                {% if item[2] > 0 %}
+                <form method="POST" action="/add_to_cart/{{ item[0] }}">
+
+                    <input type="number" name="qty" min="1" class="form-control qty-input mt-2" required>
+
+                    <button class="btn btn-primary btn-sm mt-2 w-100">
+                        Add to Cart
+                    </button>
+
+                </form>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm mt-2 w-100" disabled>
+                        Out of Stock
+                    </button>
+                {% endif %}
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
