@@ -1,5 +1,14 @@
 from database.db import get_connection
+def create_order_with_connection(con, user, product_code, quantity, total_price):
+    cur = con.cursor()
 
+    cur.execute("""
+        INSERT INTO orders
+        (user, product_code, quantity, total_price)
+        VALUES (%s, %s, %s, %s)
+    """, (user, product_code, quantity, total_price))
+
+    cur.close()
 
 # ============================
 # CREATE ORDER
