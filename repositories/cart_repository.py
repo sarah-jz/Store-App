@@ -184,3 +184,36 @@ def increase_quantity(username, pcode, quantity):
 
     con.commit()
     con.close()
+
+# ---------------- GET CART USING EXISTING CONNECTION ---------------- #
+
+def get_cart_with_connection(con, username):
+
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT pcode, quantity
+        FROM cart
+        WHERE user=%s
+        FOR UPDATE
+    """, (username,))
+
+    items = cur.fetchall()
+
+    cur.close()
+
+    return items
+
+
+# ---------------- CLEAR CART USING EXISTING CONNECTION ---------------- #
+
+def clear_cart_with_connection(con, username):
+
+    cur = con.cursor()
+
+    cur.execute("""
+        DELETE FROM cart
+        WHERE user=%s
+    """, (username,))
+
+    cur.close()
