@@ -234,3 +234,42 @@ def get_available_stock(pcode):
         return result[0]
 
     return 0
+
+# ---------------- GET PRODUCT FOR CHECKOUT ---------------- #
+
+def get_product_with_connection(con, pcode):
+
+    cur = con.cursor()
+
+    cur.execute("""
+        SELECT Pcode, Pname, Quantity, Price
+        FROM stock
+        WHERE Pcode=%s
+        FOR UPDATE
+    """, (pcode,))
+
+    product = cur.fetchone()
+
+    cur.close()
+
+    return product
+
+
+# ---------------- REDUCE STOCK USING EXISTING CONNECTION ---------------- #
+
+def reduce_stock_with_connection(con, pcode, quantity):
+
+    cur = con.cursor()
+
+    cur.execute("""
+        UPDATE stock
+        SET Quantity = Quantity - %s
+        WHERE Pcode=%s
+        AND Quantity >= %s
+    """, (quantity, pcode, quantity))
+
+    affected_rows = cur.rowcount
+
+    cur.close()
+
+    return affected_rows
