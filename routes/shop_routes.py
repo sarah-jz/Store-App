@@ -1,30 +1,25 @@
 
 from flask import (
-    Blueprint,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session,
-    flash
+    Blueprint, render_template, request,
+    redirect, url_for, session, flash
 )
 
-from services.product_service import (
-    get_all_products,
-    get_product
-)
+from services.product_service import get_all_products, get_product
 
 from services.cart_service import (
     add_to_cart,
     cart_items,
     cart_total,
-    empty_cart
+    empty_cart,
+    remove_from_cart as service_remove_from_cart,
+    update_cart_quantity
 )
+
 
 shop_bp = Blueprint("shop", __name__)
 
 
-# ---------------- SHOP HOMEPAGE ---------------- #
+# ---------------- SHOP PAGE ---------------- #
 
 @shop_bp.route("/shop")
 def shop():
@@ -34,10 +29,7 @@ def shop():
 
     products = get_all_products()
 
-    return render_template(
-        "shop.html",
-        products=products
-    )
+    return render_template("shop.html", products=products)
 
 
 # ---------------- PRODUCT DETAILS ---------------- #
@@ -54,10 +46,7 @@ def product_detail(pcode):
         flash("Product not found.")
         return redirect(url_for("shop.shop"))
 
-    return render_template(
-        "product.html",
-        product=product
-    )
+    return render_template("product.html", product=product)
 
 
 # ---------------- ADD TO CART ---------------- #
@@ -80,15 +69,13 @@ def add_product_to_cart(pcode):
             flash("Product not found.")
             return redirect(url_for("shop.shop"))
 
-        if quantity > product[2]:
+        available_stock = product[2]
+
+        if quantity > available_stock:
             flash("Requested quantity exceeds available stock.")
             return redirect(url_for("shop.shop"))
 
-        add_to_cart(
-            session["username"],
-            pcode,
-            quantity
-        )
+        add_to_cart(session["username"], pcode, quantity)
 
         flash("Product added to cart.")
 
@@ -118,7 +105,7 @@ def cart():
     )
 
 
-# ---------------- REMOVE CART ITEM ---------------- #
+# ---------------- REMOVE FROM CART ---------------- #
 
 @shop_bp.route("/remove_from_cart/<int:pcode>", methods=["POST"])
 def remove_from_cart(pcode):
@@ -126,10 +113,7 @@ def remove_from_cart(pcode):
     if "username" not in session:
         return redirect(url_for("auth.login"))
 
-    remove_item(
-        session["username"],
-        pcode
-    )
+    service_remove_from_cart(session["username"], pcode)
 
     flash("Product removed from cart.")
 
@@ -156,11 +140,13 @@ def update_cart(pcode):
             flash("Product not found.")
             return redirect(url_for("shop.cart"))
 
-        if quantity > product[2]:
+        available_stock = product[2]
+
+        if quantity > available_stock:
             flash("Requested quantity exceeds available stock.")
             return redirect(url_for("shop.cart"))
 
-        update_quantity(
+        update_cart_quantity(
             session["username"],
             pcode,
             quantity

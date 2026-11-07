@@ -1,6 +1,6 @@
-from repositories import cart_repository,
-remove_from_cart, 
-update_cart_quantity
+
+from repositories import cart_repository
+
 
 # ---------------- ADD TO CART ---------------- #
 
@@ -22,7 +22,6 @@ def cart_total(items):
     for item in items:
         quantity = item[2]
         price = item[3]
-
         total += quantity * price
 
     return total
@@ -32,6 +31,7 @@ def cart_total(items):
 
 def empty_cart(username):
     cart_repository.clear_cart(username)
+
 
 # ---------------- REMOVE CART ITEM ---------------- #
 
