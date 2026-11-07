@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cart</title>
+    <title>Your Cart</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -12,7 +12,7 @@
 
         .cart-box {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
@@ -23,92 +23,101 @@
 
 <div class="container mt-4">
 
-    <h2>🛒 Your Cart</h2>
+    <h2>Your Cart</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     <div class="cart-box mt-3">
 
-        <table class="table table-striped">
+        {% if cart %}
 
-            <tr>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
 
-            {% for item in cart %}
-            <tr>
-                <td>{{ item[0] }}</td>
-                <td>{{ item[1] }}</td>
-                <td>{{ item[2] }}</td>
-                <td>{{ item[1] * item[2] }}</td>
-            </tr>
-            {% endfor %}
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-        </table>
+                <tbody>
+                    {% for item in cart %}
+                    <tr>
+                        <td>{{ item[1] }}</td>
+
+                        <td>
+                            <form method="POST"
+                                  action="{{ url_for('shop.update_cart', pcode=item[0]) }}"
+                                  class="d-flex gap-2">
+
+                                <input type="number"
+                                       name="quantity"
+                                       value="{{ item[2] }}"
+                                       min="1"
+                                       class="form-control"
+                                       style="width: 85px;"
+                                       required>
+
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+
+                        <td>₹{{ item[3] }}</td>
+
+                        <td>₹{{ item[2] * item[3] }}</td>
+
+                        <td>
+                            <form method="POST"
+                                  action="{{ url_for('shop.remove_from_cart', pcode=item[0]) }}">
+
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
 
         <hr>
 
-        <h4>Total: ₹{{ total }}</h4>
+        <h4 class="text-end">Total: ₹{{ total }}</h4>
 
-        <a href="/checkout" class="btn btn-success w-100 mt-2">
+        <a href="{{ url_for('order.checkout') }}"
+           class="btn btn-success w-100 mt-3">
             Proceed to Checkout
         </a>
 
-        <a href="/shop" class="btn btn-secondary w-100 mt-2">
+        {% else %}
+
+        <div class="text-center py-4">
+            <h5>Your cart is empty.</h5>
+            <p class="text-muted">Add some products to get started.</p>
+        </div>
+
+        {% endif %}
+
+        <a href="{{ url_for('shop.shop') }}"
+           class="btn btn-secondary w-100 mt-2">
             Continue Shopping
         </a>
 
     </div>
-
-</div>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            background: #e9f7ef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .success-box {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .check {
-            font-size: 60px;
-            color: #28a745;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="success-box">
-
-    <div class="check">✔️</div>
-
-    <h2>Order Placed Successfully!</h2>
-
-    <p>Thank you for shopping with us.</p>
-
-    <a href="/shop" class="btn btn-primary mt-3">
-        Back to Shop
-    </a>
 
 </div>
 
